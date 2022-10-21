@@ -1,6 +1,5 @@
 /// <reference types="../CTAutocomplete" />
 /// <reference lib="es2015" />
-const File = Java.type("java.io.File");
 import PogObject from "PogData";
 import request from '../request/index';
 const PREFIX = "&5[SoulFlow] ";
@@ -30,14 +29,14 @@ let data = new PogObject("SoulFlow", {
     "first_time": true
 }, ".sf_data.json");
 register("step", () => {
-    if (data.first_time) { 
+    if (data.first_time) {
         data.first_time = false; 
         data.save();
-        ChatLib.chat("")
+        ChatLib.chat("");
         new TextComponent(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Please Set Your Api Key By Doing /api new`)).chat();
         new TextComponent(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Or By Doing /skey <key>`)).chat();
         new TextComponent(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Join Our Discord!  &b&nDiscord&r ${colors[15]}(Click)`)).setClickAction("open_url").setClickValue("https://discord.gg/SK9UDzquEN").chat();
-        ChatLib.chat("")
+        ChatLib.chat("");
     };
 }).setFps(1);
 register("chat", (key) => {
@@ -52,15 +51,18 @@ register("command", (key) => {
     ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Please Do /ct reload!`))
 }).setName("skey");
 register("worldLoad", () => {
-    if (!data.apiKey) return
+    if (!data.api_key) return;
     let uuid = Player.getUUID().replace(/-/g, "")
-    request(`https://api.hypixel.net/skyblock/profiles?key=${data.apiKey}&uuid=${uuid}`).then(sbData => {
+    request(`https://api.hypixel.net/skyblock/profiles?key=${data.api_key}&uuid=${uuid}`).then(sbData => {
         sbData = JSON.parse(sbData)
         let profile = sbData.profiles.find(a => !!a.selected)
-        if (!profile) return ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[1]}Error Getting Player's Profile ID`));
+        if (!profile) {
+            ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[1]}Error Getting Player's Profile ID`));
+            return;
+        }
         data.soulflow = profile.members[uuid].soulflow
         data.save()
-    }).catch(e => null)
+    }).catch(e => print(`${e}`));
 });
 let abc = new Gui()
 register("command", () => {
@@ -78,7 +80,6 @@ register("renderOverlay", () => {
     if (abc.isOpen()) {
         const txt = "Click anywhere to move!"
         Renderer.drawStringWithShadow(txt, Renderer.screen.getWidth()/2 - Renderer.getStringWidth(txt)/2, Renderer.screen.getHeight()/2)
-        Renderer.drawStringWithShadow(`${soulflow}`, data.x, data.y)
     }
     if (!data.soulflow && abc.isOpen()) return
     Renderer.drawStringWithShadow(`${soulflow}`, data.x, data.y)
