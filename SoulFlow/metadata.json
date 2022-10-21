@@ -1,0 +1,8 @@
+{
+    "name": "SoulFlow",
+    "author": "DocilElm",
+    "description": "Displays Your Soulflow",
+    "entry": "index.js",
+    "version": "0.0.1",
+    "requires": ["request", "PogData", "Vigilance"]
+}
