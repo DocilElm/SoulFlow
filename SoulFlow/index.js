@@ -2,7 +2,7 @@
 /// <reference lib="es2015" />
 import PogObject from "PogData";
 import request from '../request/index';
-const PREFIX = "";
+const PREFIX = "&5[SoulFlow] ";
 const colors = {
     1: '§4', // Dark Red
     2: '§c', // Red
