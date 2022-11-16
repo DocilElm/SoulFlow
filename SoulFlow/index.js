@@ -2,7 +2,7 @@
 /// <reference lib="es2015" />
 import PogObject from "PogData";
 import request from '../request/index';
-const PREFIX = "&5[SoulFlow] ";
+const PREFIX = "";
 const colors = {
     1: '§4', // Dark Red
     2: '§c', // Red
@@ -21,6 +21,7 @@ const colors = {
     15: '§7', // Gray
     16: '§f' // White
 }
+
 let data = new PogObject("SoulFlow", {
     "api_key": null,
     "x": 0,
@@ -28,6 +29,7 @@ let data = new PogObject("SoulFlow", {
     "soulflow": 0,
     "first_time": true
 }, ".sf_data.json");
+
 register("step", () => {
     if (data.first_time) {
         data.first_time = false; 
@@ -39,17 +41,20 @@ register("step", () => {
         ChatLib.chat("");
     };
 }).setFps(1);
+
 register("chat", (key) => {
     data.api_key = key;
     data.save();
     ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Api Key Successfully Set!`))
 }).setCriteria(/Your new API key is (.+)/);
+
 register("command", (key) => {
     data.api_key = key;
     data.save();
     ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Api Key Successfully Set!`))
     ChatLib.chat(ChatLib.getCenteredText(`${PREFIX}${colors[6]}Please Do /ct reload!`))
 }).setName("skey");
+
 register("worldLoad", () => {
     if (!data.api_key) return;
     let uuid = Player.getUUID().replace(/-/g, "")
@@ -64,19 +69,22 @@ register("worldLoad", () => {
         data.save()
     }).catch(e => print(`${e}`));
 });
+
 let abc = new Gui()
 register("command", () => {
     abc.open();
 }).setName("soulflow").setAliases(["sf"]);
+
 register("dragged", (dx, dy, x, y) => {
     if (!abc.isOpen()) return
     data.x = x
     data.y = y
     data.save()
 });
+
 register("renderOverlay", () => {
     soulflow = data.soulflow || 0;
-    soulflow > 1000 ?soulflow = `${PREFIX}&2${soulflow.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`: soulflow = `${PREFIX}&4${soulflow.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+    soulflow > 5000 ?soulflow = `${PREFIX}&2${soulflow.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`: soulflow = `${PREFIX}&4${soulflow.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
     if (abc.isOpen()) {
         const txt = "Click anywhere to move!"
         Renderer.drawStringWithShadow(txt, Renderer.screen.getWidth()/2 - Renderer.getStringWidth(txt)/2, Renderer.screen.getHeight()/2)
@@ -84,3 +92,8 @@ register("renderOverlay", () => {
     if (!data.soulflow && abc.isOpen()) return
     Renderer.drawStringWithShadow(`${soulflow}`, data.x, data.y)
 });
+
+register("chat", (total) => {
+    data.soulflow = parseInt(total.replace(/,/g, ''));
+    data.save();
+}).setCriteria(/You internalized .+⸎ Soulflow and have a total of (.+)⸎!/)
